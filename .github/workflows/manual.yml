@@ -4,54 +4,57 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'data/raw/**'
-      - 'src/preprocessing/**'
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/dataset/cs-training.csv'
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/dataset/cs-test.csv'
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'data/raw/**'
-      - 'src/preprocessing/**'
-  workflow_dispatch:  # Allow manual trigger from GitHub UI
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/dataset/cs-training.csv'
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/dataset/cs-test.csv'
+      - 'Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/**'
+  workflow_dispatch:
 
 jobs:
   preprocess:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas numpy matplotlib seaborn
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    
-    - name: Run preprocessing script
-      run: |
-        python src/preprocessing/automate_Ida-Sri-Afiqah.py
-    
-    - name: Verify preprocessed files
-      run: |
-        ls -la data/processed/
-        echo "Preprocessed files created on $(date)"
-    
-    - name: Upload preprocessed data as artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: preprocessed-data
-        path: data/processed/
-        retention-days: 7
-    
-    - name: Commit and push if there are changes
-      run: |
-        git config --global user.name 'GitHub Actions Bot'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add data/processed/cleaned_training.csv data/processed/cleaned_testing.csv
-        git diff --staged --quiet || git commit -m "Update preprocessed data files [automated]"
-        git push
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas numpy matplotlib seaborn
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run preprocessing script
+        run: |
+          python Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/automate_Ida-Sri-Afiqah.py
+
+      - name: Verify preprocessed files
+        run: |
+          ls -la Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/givemesomecredit_preprocessing/
+          echo "Preprocessed files created on $(date)"
+
+      - name: Upload preprocessed data as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: preprocessed-data
+          path: Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/givemesomecredit_preprocessing/
+          retention-days: 7
+
+      - name: Commit and push if there are changes
+        run: |
+          git config --global user.name 'GitHub Actions Bot'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/givemesomecredit_preprocessing/cleaned_training.csv \
+                  Ekperimen_SML_Ida_Sri_Afiqah/preprocessing/givemesomecredit_preprocessing/cleaned_testing.csv
+          git diff --staged --quiet || git commit -m "Update preprocessed data files [automated]"
+          git push origin main
