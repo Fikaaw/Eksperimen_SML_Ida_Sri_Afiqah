@@ -1,0 +1,30 @@
+name: ML Model Training CI
+
+on:
+  push:
+    branches:
+      - main # Or the branch you use for development, e.g., master
+
+jobs:
+  train_model:
+    runs-on: ubuntu-latest # Use a suitable runner environment
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.9.2 # Specify the Python version compatible with your conda.yaml
+          environment-file: Workflow-CI/conda.yaml
+          auto-activate-base: false # Prevent activating base env
+
+      - name: Run MLflow Project
+        shell: bash # Use bash shell for the run step
+        run: |
+          conda activate myenv # Activate the environment created from conda.yaml (replace 'myenv' if your environment name is different)
+          mlflow run Workflow-CI/
+
+      # You might want to add steps here to upload MLflow artifacts,
+      # save the model, or notify if the training fails.
