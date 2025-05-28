@@ -26,7 +26,7 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         activate-environment: mlproject
-        environment-file: Workflow-CI/MLProject/conda.yaml
+        environment-file: Workflow-CI/mlflow_project/conda.yaml
         python-version: ${{ env.PYTHON_VERSION }}
         auto-activate-base: false
 
@@ -40,14 +40,14 @@ jobs:
       shell: bash -l {0}
       run: |
         conda activate mlproject
-        cd Workflow-CI/MLProject
+        cd Workflow-CI/mlflow_project
         python -c "import sys; sys.path.append('.'); exec(open('modelling.py').read().split('# Preprocessing section')[0] if '# Preprocessing section' in open('modelling.py').read() else '')"
 
     - name: Run model training and testing
       shell: bash -l {0}
       run: |
         conda activate mlproject
-        cd Workflow-CI/MLProject
+        cd Workflow-CI/mlflow_project
         mlflow run . --no-conda
 
     - name: Upload test results
@@ -55,9 +55,7 @@ jobs:
       with:
         name: test-results
         path: |
-          Workflow-CI/MLProject/outputs/
-          Workflow-CI/MLProject/models/
-          Workflow-CI/MLProject/mlruns/
+          Workflow-CI/mlflow_project/mlruns/
         retention-days: 30
 
   build-and-push-docker:
